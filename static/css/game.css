@@ -1,0 +1,56 @@
+#game_board a {
+    color:#000;
+    display:block;
+    font-size:60px;
+    height:35px;
+    position:relative;
+    text-decoration:none;
+    background: #FFFF99;
+    width:35px;
+}
+#game_board .white-clicked{
+    display: block;
+    background: black;
+    border-radius: 50%;
+    margin: 0;
+    background: radial-gradient(circle at 100px 100px, #474785, #FFF);
+}
+
+#game_board .black-clicked{
+    display: block;
+    background: black;
+    border-radius: 50%;
+    margin: 0;
+    background: radial-gradient(circle at 100px 100px, #F2F2F8, #070000);
+}
+
+
+#game_board { border:5px solid #333; }
+#game_board td {
+    background:#FFFF99;
+    background:-moz-linear-gradient(top, #FFFF99, #FFFF99);
+    background:-webkit-gradient(linear,0 0, 0 100%, from(#FFFF99), to(#FFFF99));
+    height:35px;
+    width:35px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+
+.btn-lg, .btn-group-lg > .btn {
+    padding: 18px 48px;
+    font-size: 19px;
+    line-height: 1.1;
+    border-radius: 6px;
+}
+
+.btn-primary {
+    color: #ffffff;
+    background-color: #375a7f;
+    border-color: #375a7f;
+}
+
+.bs-component {
+    position: relative;
+    margin-top: 20px;
+}

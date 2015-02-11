@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <!-- <div ng-include src="'static/js/app/partials/board.html'"></div> -->
+            <table border="3" id="game_board" cellpadding="0" cellspacing="0">
+                <tr ng-repeat="i in [] | range: 19 ">
+                    <td ng-repeat="j in [] | range: 19 ">
+                        <a id="box-{{i}}-{{j}}" ng-class="board[{{i}}][{{j}}] && 'black-clicked'" ng-click="box_clicked($event)" href=""></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-3">
+            <div class="bs-component">
+              <button class="btn-primary btn-lg" ng-click="create_game()">Create game</button> 
+            </div>
+        </div>
+    </div>
+</div>

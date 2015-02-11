@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <!-- <div ng-include src="'static/js/app/partials/board.html'"></div> -->
+            <table border="3" id="game_board" cellpadding="0" cellspacing="0">
+                <tr ng-repeat="i in [] | range: 19 ">
+                    <td ng-repeat="j in [] | range: 19 ">
+                        <a id="box-{{i}}-{{j}}" ng-class="board[{{i}}][{{j}}] == role && role_colour+'-clicked' || board[{{i}}][{{j}}] && board[{{i}}][{{j}}] != role && role_opponet_colour+'-clicked' " ng-click="box_clicked($event)" href=""></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-3">
+            <div class="bs-component">
+              <button class="btn-primary btn-lg" ng-hide="game_id" ng-click="create_game()">Create game</button> 
+            </div>
+            <div class="bs-component">
+              <div ng-show="game_id && actual_turn" > You Role: Game {{role}} </div> 
+              <div ng-show="game_id && actual_turn" > Game Status: Started </div> 
+              <div ng-show="game_id && actual_turn" > Actual turn: <b>{{actual_turn}}</b></div> 
+              <div ng-show="game_id && !actual_turn" >Game Status: No started</div> 
+              <div ng-show="game_id && !actual_turn" >(Invite your friend to participe your game by sending them the url of this page)</div> 
+            </div>
+        </div>
+    </div>
+</div>
