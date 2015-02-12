@@ -2,6 +2,8 @@ var app=angular.module("myApp");
 
 app.controller('GameController', ['$scope', '$rootScope', '$location', '$routeParams', '$http', 'WebsocketService', function ($scope, $rootScope, $location, $routeParams, $http, WebsocketService) {
     $scope.actual_turn = ''
+    $scope.chat_text = ''
+    $scope.message_input_text = ''
     if ($routeParams.game_id){
         $scope.game_id = $routeParams.game_id
         $rootScope.game_id = $routeParams.game_id
@@ -21,9 +23,15 @@ app.controller('GameController', ['$scope', '$rootScope', '$location', '$routePa
         }
     }
 
+    $scope.restart_game = function(){
+        WebsocketService.send_message(
+           {'action':'restart_game', 'game_id': $scope.game_id, 'loser': $scope.role} 
+        )
+    };
+
     function readResponse(message){
         console.log(message)
-        if (message.action == 'start_game' || message.action == 'board_status'){
+        if (message.action == 'start_game' || message.action == 'board_status' || message.action == 'restart_game'){
             $scope.actual_turn =  message.board_info.actual_turn
             console.log(message.role)
             $scope.role = message.role
@@ -43,6 +51,13 @@ app.controller('GameController', ['$scope', '$rootScope', '$location', '$routePa
             $scope.actual_turn =  message.board_info.actual_turn
             $scope.board = message.board_info.board
             $scope.board_check_status = message.board_check_status
+        }else if (message.action == 'receive_chat_message'){
+            $scope.chat_text += message.sender + ' said: '+ message.chat_message + '\n'
+            textarea = angular.element('#chat_text_area');
+            textarea.scrollTop(textarea[0].scrollHeight);
+        }
+        if (message.action == 'restart_game'){
+            alert('Game is restarted');
         }
         if(!$scope.$$phase) {
             $scope.$apply();
@@ -50,6 +65,7 @@ app.controller('GameController', ['$scope', '$rootScope', '$location', '$routePa
         if ($scope.board_check_status){
             alert('Winner is ' + $scope.board_check_status['colour'])
         }
+
     }
 
     WebsocketService.callback = readResponse
@@ -72,6 +88,12 @@ app.controller('GameController', ['$scope', '$rootScope', '$location', '$routePa
            {'action':'select_box', 'game_id': $scope.game_id, 'i': i, 'j': j, 'role': $scope.role} 
         )
 
+    };
+    $scope.add_chat_message = function(e){
+        WebsocketService.send_message(
+           {'action':'send_chat_message', 'game_id':$scope.game_id, 'message': $scope.message_input_text, 'sender': $scope.role} 
+        )
+        $scope.message_input_text = ''
     };
 }]);
 
@@ -96,10 +118,8 @@ app.controller('FakeGameController', ['$scope', '$rootScope', '$location', '$rou
         success(function(response) {
           $scope.board = response.board
           console.log($scope.board)
-          console.log(3)
         })
         .error(function(response) {
-          console.log(2)
         });
       }else{
         console.log(board)

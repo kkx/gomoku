@@ -88,6 +88,24 @@ class OrderWebSockertHandler(tornado.websocket.WebSocketHandler):
                 message.update({'role': 'visitor'})
                 c.write_message(message)
 
+    def get_new_board(self):
+        message = {}
+        colour = ['black', 'white']
+        random.shuffle(colour)
+        message.update({'host_colour': colour[0], 'opponent_colour': colour[1]})
+        start_turn, actual_turn = '', ''
+        if message['host_colour'] == 'white':
+            start_turn = 'host'
+            actual_turn = 'host'
+        else:
+            start_turn = 'opponent'
+            actual_turn = 'opponent'
+        message.update({'start_turn': start_turn, 'actual_turn': actual_turn})
+        board = [[''] * 19] * 19
+        message.update({'board': board})
+        message = {'action': 'start_game', 'board_info': message}
+        return message
+
     def on_message(self, message):
         print message
         message = json.loads(message)
@@ -123,21 +141,7 @@ class OrderWebSockertHandler(tornado.websocket.WebSocketHandler):
             game = game_id and self.settings['sync_db']['game'].find_one({'_id': ObjectId(game_id)}) or {}
 
             if game and not ('board_info' in game) and game_id and game.get('opponent_session_id') == self.session_id:
-                message = {}
-                colour = ['black', 'white']
-                random.shuffle(colour)
-                message.update({'host_colour': colour[0], 'opponent_colour': colour[1]})
-                start_turn, actual_turn = '', ''
-                if message['host_colour'] == 'white':
-                    start_turn = 'host'
-                    actual_turn = 'host'
-                else:
-                    start_turn = 'opponent'
-                    actual_turn = 'opponent'
-                message.update({'start_turn': start_turn, 'actual_turn': actual_turn})
-                board = [[''] * 19] * 19
-                message.update({'board': board})
-                message = {'action': 'start_game', 'board_info': message}
+                message = self.get_new_board()
                 game.update(message)
                 self.settings['sync_db']['game'].save(game)
                 self.game_broadcast(game_id, message)
@@ -148,6 +152,22 @@ class OrderWebSockertHandler(tornado.websocket.WebSocketHandler):
                                     'board_info': board_info,
                                     'role': role,
                                     'board_check_status': board_check_status})
+        if message.get('action') == 'send_chat_message':
+            self.game_broadcast(game_id, {'action': 'receive_chat_message',
+                                          'sender':message.get('sender', ''),
+                                          'chat_message': message.get('message', '')})
+
+        if message.get('action') == 'restart_game':
+            loser = message.get('loser')
+            game_id = message.get('game_id')
+            game = game_id and self.settings['sync_db']['game'].find_one({'_id': ObjectId(game_id)}) or {}
+            if game['host_session_id'] == self.session_id or game['host_opponent_id'] == self.session_id:
+                message = self.get_new_board()
+                game.update(message)
+                self.settings['sync_db']['game'].save(game)
+                message.update({'action': 'restart_game', 'loser': loser})
+                self.game_broadcast(game_id, message)
+                #self.game_broadcast(game_id, {'action': 'receive_chat_message', 'chat_message': message.get('message', '')})
 
     def callback(self, count):
         pass

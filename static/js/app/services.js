@@ -1,7 +1,7 @@
 angular.module("myApp").factory('WebsocketService', ['$q', '$location', '$rootScope', function($q, $location, $rootScope) {
         var Service = {};
         var callbacks = {};
-        var host = 'ws://'+$location.host()+'/websocket';
+        var host = 'ws://'+$location.host() + ':8888' +'/websocket';
         var websocket
         Service.callback = function(){
         }

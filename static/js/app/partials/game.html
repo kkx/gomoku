@@ -21,6 +21,22 @@
               <div ng-show="game_id && !actual_turn" >Game Status: No started</div> 
               <div ng-show="game_id && !actual_turn" >(Invite your friend to participe your game by sending them the url of this page)</div> 
             </div>
+
+            <div class="bs-component">
+                    <div >Chat</div>
+                    <div class="row component">
+                      <div class="col-md-8"><input type="text" ng-model="message_input_text" class="form-control"></div>
+                      <div class="col-md-1"><button  class="btn btn-primary btn-default" ng-click="add_chat_message()"> send </button></div>
+                    </div>
+                    <div class="bs-component">
+                        <textarea id="chat_text_area" readonly=True ng-model="chat_text" class="form-control" rows="10">
+                        </textarea>
+                    </div>
+            </div>
+
+            <div class="bs-component">
+                <button class="btn-primary btn-lg" ng-show="role=='host' || role=='opponent'" ng-click="restart_game()">Give up and Start a new game</button> 
+            </div>
         </div>
     </div>
 </div>
